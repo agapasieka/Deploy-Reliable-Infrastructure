@@ -1,1 +1,1 @@
-# deploy-reliable-infrastructure
+# Deploy reliable infrastructure
