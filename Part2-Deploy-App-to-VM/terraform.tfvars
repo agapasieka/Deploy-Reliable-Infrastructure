@@ -1,6 +1,6 @@
 #project_id 
 region           = "europe-west1"
-zones            = ["europe-west1-a", "europe-west1-b", "europe-west1-c"]
+zones            = ["europe-west1-b", "europe-west1-c", "europe-west1-d"]
 machine_type     = "e2-medium"
 environment      = "dev"
 business_divsion = "web"
