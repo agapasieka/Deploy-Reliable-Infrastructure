@@ -1,4 +1,4 @@
-# Test the blog page using a Docker container
+# Test the blog website using a Docker container
 
 ## Step 1: Create the Blog HTML File
 
@@ -97,12 +97,13 @@ This Dockerfile uses the official Nginx image and copies your blog.html file int
    http://localhost:8080
    ```
 
-# Step 5: Delete continer
+## Step 5: Delete continer
    ```
    docker rm -f nginx-blog-container
    ```
 
-# Step 6: After testing our website code, we will create and test a startup script using the same html code. This script will be later used to deploy our blog on Google Compute Engine (GCE)
+After testing our website code, we will create and test a startup script using the same html code. This script will be later used to deploy our blog on Google Compute Engine (GCE)
+## Step 6: Setup and test startup script
 setup-blog-nginx.sh
     ```
     #!/bin/bash
