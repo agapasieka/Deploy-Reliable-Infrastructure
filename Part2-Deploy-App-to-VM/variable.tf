@@ -10,6 +10,12 @@ variable "region" {
   type        = string
 }
 
+# GCP Zones
+variable "zones" {
+  description = "Zones"
+  type        = list(string)
+}
+
 # GCP Compute Engine Machine Type
 variable "machine_type" {
   description = "Compute Engine Machine Type"
