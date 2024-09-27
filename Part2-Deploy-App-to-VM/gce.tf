@@ -32,7 +32,7 @@ resource "google_compute_instance" "blog_vm" {
   }
 
   metadata = {
-    metadata_startup_script = file("${path.module}/setup-blog-nginx.sh")  # Install Webserver
+    metadata_startup_script = file("${path.module}/scripts/setup-blog-nginx.sh")  # Install Webserver
     environment             = local.environment
   }
   service_account {

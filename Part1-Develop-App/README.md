@@ -181,6 +181,7 @@ setup-blog-nginx.sh
 
     echo "Blog setup complete! Access it at http://<your_server_ip>"
     ```
+The script can be run on Debian-based systems like Ubuntu and Debian itself and Red Hat-based distributions like CentOS, Red Hat Enterprise Linux (RHEL), and older versions of Fedora.
 1. Save the script into the same directory as your blog.html and my-dog.jpg image.
 2. Run the following command to run and execute Debian container. 
     ```
@@ -197,7 +198,7 @@ setup-blog-nginx.sh
     ```
     localhost:8080
     ```
-    
+
 ## The End
 
 

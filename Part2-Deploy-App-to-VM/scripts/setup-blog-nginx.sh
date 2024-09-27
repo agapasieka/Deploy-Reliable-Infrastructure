@@ -43,7 +43,7 @@ EOL
 
 # Copy the image to Nginx web directory
 echo "Copying image to Nginx directory..."
-cp /temp/my-dog.jpg /usr/share/nginx/html/my-dog.jpg || { echo "Image not found. Please make sure '/temp/my-dog.jpg' exists."; exit 1; }
+cp /scripts/my-dog.jpg /usr/share/nginx/html/my-dog.jpg || { echo "Image not found. Please make sure '/scripts/my-dog.jpg' exists."; exit 1; }
 
 # Set permissions for Nginx web directory
 echo "Setting permissions..."
