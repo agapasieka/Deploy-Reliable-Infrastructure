@@ -58,7 +58,10 @@ resource "google_compute_forwarding_rule" "mylb" {
   depends_on = [google_compute_subnetwork.regional_proxy_subnet]
 }
 
-
+output "Load_Balancer_IP" {
+  value       = google_compute_address.mylb.address
+  description = "The external IP address of the Load Balancer"
+}
 
 
 
