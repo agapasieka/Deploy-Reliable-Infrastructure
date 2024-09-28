@@ -1,58 +1,43 @@
 #!/bin/bash
 
-# Update package list and install Nginx
-echo "Updating package list and installing Nginx..."
+# Fetch the project ID from the instance metadata
+PROJECT_ID=$(gcloud config get-value project)
+
+# Update package list and install Nginx and Google Cloud SDK
+echo "Updating package list and installing Nginx and Google Cloud SDK..."
 if [ -f /etc/debian_version ]; then
-    apt update -y && apt install -y nginx
+    sudo apt update -y && sudo apt install -y nginx google-cloud-sdk
 elif [ -f /etc/redhat-release ]; then
-    yum update -y && yum install -y nginx
+    sudo yum update -y && sudo yum install -y nginx google-cloud-sdk
 fi
 
-# Create project directory and blog HTML file
-echo "Setting up the blog directory and HTML file..."
-mkdir -p /usr/share/nginx/html
-cat <<EOL > /usr/share/nginx/html/blog.html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Blog Page</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f9; color: #333; }
-        header { text-align: center; margin-bottom: 40px; }
-        article { max-width: 800px; margin: 0 auto; padding: 20px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
-        h1 { color: #3b5998; }
-        footer { text-align: center; margin-top: 40px; font-size: 0.8em; }
-        img { max-width: 100%; height: auto; display: block; margin: 20px auto; }
-    </style>
-</head>
-<body>
-    <header><h1>Welcome to My Blog</h1></header>
-    <article>
-        <h2>First Blog Post</h2>
-        <p>This is a sample blog post content.</p>
-        <h2>Second Blog Post</h2>
-        <p>This is a second blog post content, where I have added my dog's photo.</p>
-        <img src="my-dog.jpg" alt="Blog Image" style="max-width:80%; height:auto; display:block; margin: 20px auto;">
-    </article>
-    <footer>&copy; 2024 My Blog</footer>
-</body>
-</html>
-EOL
+# Create the web directory if it doesn't exist
+echo "Setting up the Nginx HTML directory..."
+sudo mkdir -p /usr/share/nginx/html
 
-# Copy the image to Nginx web directory
-echo "Copying image to Nginx directory..."
-cp /scripts/my-dog.jpg /usr/share/nginx/html/my-dog.jpg || { echo "Image not found. Please make sure '/scripts/my-dog.jpg' exists."; exit 1; }
-
-# Set permissions for Nginx web directory
+# Set permissions for the Nginx web directory
 echo "Setting permissions..."
-chown -R www-data:www-data /usr/share/nginx/html
-chmod -R 755 /usr/share/nginx/html
+sudo chown -R www-data:www-data /usr/share/nginx/html
+sudo chmod -R 755 /usr/share/nginx/html
+
+# Change directory to the Nginx web directory
+cd /usr/share/nginx/html
+
+# Copy the blog.html and image from GCS bucket to the Nginx web directory
+echo "Copying blog.html and image from GCS bucket to Nginx directory..."
+sudo gcloud storage cp gs://${PROJECT_ID}/blog.html ./blog.html 
+sudo gcloud storage cp gs://${PROJECT_ID}/my-dog.jpg ./my-dog.jpg 
+
+# Ensure that the copied files have the correct permissions
+sudo chmod 644 /usr/share/nginx/html/blog.html
+sudo chmod 644 /usr/share/nginx/html/my-dog.jpg
+
+# Remove the default Nginx configuration if it exists
+sudo rm -f /etc/nginx/sites-enabled/default
 
 # Configure Nginx to serve the blog page
-echo "Configuring Nginx..."
-cat <<EOF > /etc/nginx/sites-available/blog
+echo "Configuring Nginx to serve the blog page..."
+sudo tee /etc/nginx/sites-available/blog > /dev/null <<EOF
 server {
     listen 80;
     server_name _;
@@ -65,11 +50,10 @@ server {
 EOF
 
 # Enable the blog configuration
-ln -sf /etc/nginx/sites-available/blog /etc/nginx/sites-enabled/blog
-rm -f /etc/nginx/sites-enabled/default
+sudo ln -sf /etc/nginx/sites-available/blog /etc/nginx/sites-enabled/blog
 
 # Test and restart Nginx
 echo "Testing Nginx configuration..."
-nginx -t && systemctl restart nginx || service nginx restart
+sudo nginx -t && sudo systemctl restart nginx || sudo service nginx restart
 
 echo "Blog setup complete! Access it at http://<your_server_ip>"
