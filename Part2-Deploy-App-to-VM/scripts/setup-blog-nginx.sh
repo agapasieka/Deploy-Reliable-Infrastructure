@@ -3,7 +3,7 @@
 # Fetch the project ID 
 PROJECT_ID=$(gcloud config get-value project)
 # Fetch the bucket name
-BUCKET=$(gcloud storage buckets list --filter="name:$PROJECT_ID-bucket" --format="value(name)")
+BUCKET=$PROJECT_ID-bucket
 
 # Update package list and install Nginx and Google Cloud SDK
 echo "Updating package list and installing Nginx and Google Cloud SDK..."
