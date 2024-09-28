@@ -16,6 +16,7 @@ data "google_compute_image" "my_image" {
 #   size = 20
 # }
 
+
 # Regional Instance Template
 resource "google_compute_region_instance_template" "blog" {
   name         = "${local.name}-blog-template"

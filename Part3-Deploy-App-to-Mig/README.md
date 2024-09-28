@@ -28,5 +28,3 @@ When deployment completes, terraform outputs the external IP of load balancer. Y
   ```sh
   terraform destroy
   ```
-
-## The End
