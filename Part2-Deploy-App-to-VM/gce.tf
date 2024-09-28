@@ -48,7 +48,6 @@ resource "google_compute_instance" "blog_vm" {
     environment             = local.environment
   }
   service_account {
-    # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     email  = google_service_account.blog_vm_sa.email
     scopes = ["cloud-platform"]
   }
