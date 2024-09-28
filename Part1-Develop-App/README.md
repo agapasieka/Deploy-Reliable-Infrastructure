@@ -82,7 +82,7 @@
    # Copy the image to the default Nginx web directory
    COPY my-dog.jpg /usr/share/nginx/html/my-dog.jpg
    ```
-This Dockerfile uses the official Nginx image and copies your blog.html file into the container's default web directory, renaming it to index.html so that it is served as the home page.
+This Dockerfile uses the official Nginx image and copies your blog.html and my-dog.jpg file into the container's default web directory, renaming it to index.html so that it is served as the home page.
 
 ## Step 3: Build and Run the Docker Container
 
