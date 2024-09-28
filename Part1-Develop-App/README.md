@@ -13,7 +13,7 @@
    ```
 3. Add the following HTML content
    ```
-      <!DOCTYPE html>
+   <!DOCTYPE html>
    <html>
    <head>
        <meta charset="UTF-8">
