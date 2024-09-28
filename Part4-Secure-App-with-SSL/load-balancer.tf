@@ -22,7 +22,7 @@ resource "google_compute_region_backend_service" "mylb_bs" {
   name                  = "${local.name}-blog-backend-service"
   protocol              = "HTTP"
   load_balancing_scheme = "EXTERNAL_MANAGED"
-  health_checks         = [google_compute_region_health_check.mylb.self_link]
+  health_checks         = [google_compute_region_health_check.mylb_hc.self_link]
   port_name             = "webserver"
   backend {
     group           = google_compute_region_instance_group_manager.blog_mig.instance_group
@@ -57,7 +57,7 @@ resource "google_compute_forwarding_rule" "mylb_http" {
   target                = google_compute_region_target_http_proxy.mylb.self_link
   port_range            = "80"
   ip_protocol           = "TCP"
-  ip_address            = google_compute_address.mylb.address
+  ip_address            = google_compute_address.mylb_ip.address
   load_balancing_scheme = "EXTERNAL_MANAGED"
   network               = google_compute_network.myvpc.id
 
@@ -70,7 +70,7 @@ resource "google_compute_forwarding_rule" "mylb_https" {
     target      = google_compute_region_target_https_proxy.mylb.self_link
     port_range  = "443"
     ip_protocol = "TCP"
-    ip_address = google_compute_address.mylb.address
+    ip_address = google_compute_address.mylb_ip.address
     load_balancing_scheme = "EXTERNAL_MANAGED" 
     network = google_compute_network.myvpc.id
     
@@ -88,7 +88,7 @@ resource "google_compute_forwarding_rule" "mylb_https" {
   }
 
 output "Load_Balancer_IP" {
-  value       = google_compute_address.mylb.address
+  value       = google_compute_address.mylb_ip.address
   description = "The external IP address of the Load Balancer"
 }
 
