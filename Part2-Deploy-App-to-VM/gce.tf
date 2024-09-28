@@ -53,3 +53,7 @@ resource "google_compute_instance" "blog_vm" {
     scopes = ["cloud-platform"]
   }
 }
+
+output "External_IP" {
+  value = google_compute_instance.blog_vm.network_interface[0].access_config[0].nat_ip
+}
