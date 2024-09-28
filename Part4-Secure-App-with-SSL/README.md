@@ -12,7 +12,7 @@ We will start with generating certificate
 
 2. Change directory 
   ```sh
-  cd Deploy-Reliable-Infrastructure/Part3-Deploy-App-to-Mig/self-signed-ssl
+  cd Deploy-Reliable-Infrastructure/Part4-Secure-App-with-SSL/self-signed-ssl
   ```
 3. Create private key
   ```sh
