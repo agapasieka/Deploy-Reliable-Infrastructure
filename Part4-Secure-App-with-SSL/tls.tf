@@ -1,3 +1,8 @@
+resource "google_project_service" "cert_manager_api" {
+  service             = "certificatemanager.googleapis.com"
+  disable_on_destroy  = false 
+}
+
 # Certificate manager 
 resource "google_certificate_manager_certificate" "blog_ssl" {
   location    = var.region
