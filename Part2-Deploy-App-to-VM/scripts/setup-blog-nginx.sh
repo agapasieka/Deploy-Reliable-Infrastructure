@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# Fetch the project ID from the instance metadata
+# Fetch the project ID 
 PROJECT_ID=$(gcloud config get-value project)
+# Fetch the bucket name
+BUCKET=$(gcloud storage buckets list --filter="name:$PROJECT_ID-bucket" --format="value(name)")
 
 # Update package list and install Nginx and Google Cloud SDK
 echo "Updating package list and installing Nginx and Google Cloud SDK..."
@@ -25,8 +27,9 @@ cd /usr/share/nginx/html
 
 # Copy the blog.html and image from GCS bucket to the Nginx web directory
 echo "Copying blog.html and image from GCS bucket to Nginx directory..."
-sudo gcloud storage cp gs://${PROJECT_ID}/blog.html ./blog.html 
-sudo gcloud storage cp gs://${PROJECT_ID}/my-dog.jpg ./my-dog.jpg 
+sudo gsutil cp -r gs://$BUCKET/blog.html ./blog.html 
+sudo gsutil cp -r gs://$BUCKET/my-dog.jpg ./my-dog.jpg 
+
 
 # Ensure that the copied files have the correct permissions
 sudo chmod 644 /usr/share/nginx/html/blog.html
