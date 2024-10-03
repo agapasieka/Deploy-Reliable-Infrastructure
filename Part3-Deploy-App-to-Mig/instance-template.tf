@@ -4,19 +4,6 @@ data "google_compute_image" "my_image" {
   family  = "debian-12"
 }
 
-# # Boot Disk
-# resource "google_compute_disk" "blog_vm_boot" {
-#   name  = "blog-vm-boot"
-#   type  = "pd-ssd"
-#   zone  = var.zones[0]
-#   image = data.google_compute_image.my_image.self_link
-#   labels = {
-#     environment = local.environment
-#   }
-#   size = 20
-# }
-
-
 # Regional Instance Template
 resource "google_compute_region_instance_template" "blog" {
   name         = "${local.name}-blog-template"
