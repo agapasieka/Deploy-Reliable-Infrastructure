@@ -8,7 +8,7 @@ resource "google_compute_firewall" "allow_http" {
   direction     = "INGRESS"
   network       = google_compute_network.myvpc.id
   priority      = 1000
-  source_ranges = [""]
+  source_ranges = ["10.0.0.0/24"]
   target_tags   = ["webserver-tag"]
 }
 
