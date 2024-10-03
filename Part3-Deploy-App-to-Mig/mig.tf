@@ -6,7 +6,7 @@ resource "google_compute_region_instance_group_manager" "blog_mig" {
   distribution_policy_zones = var.zones
 
   version {
-    instance_template = google_compute_region_instance_template.blog.id
+    instance_template = google_compute_region_instance_template.blog_green.id
   }
   # Named Port
   named_port {
