@@ -46,14 +46,14 @@ resource "google_compute_target_http_proxy" "mylb" {
 
 
 # Regional Forwarding Rule
-resource "google_compute_forwarding_rule" "mylb" {
+resource "google_compute_global_forwarding_rule" "mylb" {
   name                  = "${local.name}-mylb-forwarding-rule"
   target                = google_compute_target_http_proxy.mylb.self_link
   port_range            = "80"
   ip_protocol           = "TCP"
   ip_address            = google_compute_global_address.mylb.address
   load_balancing_scheme = "EXTERNAL_MANAGED"
-  network               = google_compute_network.myvpc.id
+  
 
   depends_on = [google_compute_subnetwork.regional_proxy_subnet]
 }
