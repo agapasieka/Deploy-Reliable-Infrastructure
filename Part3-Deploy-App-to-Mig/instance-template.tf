@@ -5,7 +5,7 @@ data "google_compute_image" "my_image" {
 }
 
 # Regional Instance Template
-resource "google_compute_region_instance_template" "blog" {
+resource "google_compute_region_instance_template" "blog_green" {
   name         = "${local.name}-blog-template"
   description  = "This template is used to create Blog instances."
   tags         = [tolist(google_compute_firewall.allow_http.target_tags)[0], tolist(google_compute_firewall.allow_health_checks.target_tags)[0]]
