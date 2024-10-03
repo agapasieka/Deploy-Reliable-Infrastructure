@@ -1,7 +1,7 @@
 # Create a GCS bucket
 resource "google_storage_bucket" "public_bucket" {
   name          = "${var.project_id}-bucket"
-  location      = "EU"
+  location      = "US"
   force_destroy = true
 
   labels = {
