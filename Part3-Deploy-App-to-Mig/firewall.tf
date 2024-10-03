@@ -1,4 +1,4 @@
-# Allow HTTP Port 80 from Proxy-only subnet
+# Allow HTTP from Proxy-only subnet to backends
 resource "google_compute_firewall" "allow_http" {
   name = "${local.name}-fwrule-allow-http80"
   allow {
