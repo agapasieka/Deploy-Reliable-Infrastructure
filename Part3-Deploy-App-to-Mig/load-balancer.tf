@@ -17,7 +17,7 @@ resource "google_compute_health_check" "mylb" {
   }
 }
 
-# Regional Backend Service
+# Backend Service
 resource "google_compute_backend_service" "mylb" {
   name                  = "${local.name}-blog-backend-service"
   protocol              = "HTTP"
@@ -31,21 +31,21 @@ resource "google_compute_backend_service" "mylb" {
   }
 }
 
-# Regional URL Map
+# URL Map
 resource "google_compute_url_map" "mylb" {
   name            = "${local.name}-mylb-url-map"
   default_service = google_compute_backend_service.mylb.self_link
 }
 
 
-# Regional HTTP Proxy
+# HTTP Proxy
 resource "google_compute_target_http_proxy" "mylb" {
   name    = "${local.name}-mylb-http-proxy"
   url_map = google_compute_url_map.mylb.self_link
 }
 
 
-# Regional Forwarding Rule
+# Forwarding Rule
 resource "google_compute_global_forwarding_rule" "mylb" {
   name                  = "${local.name}-mylb-forwarding-rule"
   target                = google_compute_target_http_proxy.mylb.self_link
@@ -53,7 +53,6 @@ resource "google_compute_global_forwarding_rule" "mylb" {
   ip_protocol           = "TCP"
   ip_address            = google_compute_global_address.mylb.address
   load_balancing_scheme = "EXTERNAL_MANAGED"
-  
 
   depends_on = [google_compute_subnetwork.regional_proxy_subnet]
 }
