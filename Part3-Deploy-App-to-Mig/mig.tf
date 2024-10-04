@@ -27,6 +27,7 @@ resource "google_compute_instance_group_manager" "blog_mig" {
     max_unavailable_fixed          = length(var.zones)
     replacement_method             = "SUBSTITUTE"
   }
+depends_on = [google_storage_bucket.public_bucket, google_storage_bucket_object.file1, google_storage_bucket_object.file2]
 }
 
 # Health Check
