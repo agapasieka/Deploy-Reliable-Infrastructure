@@ -81,18 +81,18 @@ OPTIONAL: Use can also deploy the certificate using Terraform. Create tls.tf wit
   ```
 7. Create HTTPS Proxy in load-balander.tf
   ```sh
-  resource "google_compute_region_target_https_proxy" "mylb" {
+   resource "google_compute_target_https_proxy" "mylb" {
     name   = "${local.name}-mylb-https-proxy"
-    url_map = google_compute_region_url_map.mylb.self_link
-    certificate_manager_certificates = [ google_certificate_manager_certificate.blog_ssl.id ]
+    url_map = google_compute_url_map.mylb.self_link
+    ssl_certificates = [google_compute_ssl_certificate.blog_ssl.id]
   }
   ```
-8. Create Regional Forwarding rule for HTTPS
+8. Create Forwarding rule for HTTPS
   ```sh
-    # Regional HTTPS Forwarding Rule
+    # HTTPS Forwarding Rule
   resource "google_compute_forwarding_rule" "mylb_https" {
       name        = "${local.name}-mylb-https-forwarding-rule"
-      target      = google_compute_region_target_https_proxy.mylb.self_link
+      target      = google_compute_target_https_proxy.mylb.self_link
       port_range  = "443"
       ip_protocol = "TCP"
       ip_address = google_compute_address.mylb.address
@@ -114,14 +114,14 @@ OPTIONAL: Use can also deploy the certificate using Terraform. Create tls.tf wit
     }
   }
   ```
-10. Modify the Regional HTTP Proxy to use the new URL Map for HTTP to HTTPS redirection. It should looks like this
+10. Modify the HTTP Proxy to use the new URL Map for HTTP to HTTPS redirection. It should looks like this
   ```sh
-    # Regional HTTP Proxy
+    # HTTP Proxy
   resource "google_compute_region_target_http_proxy" "mylb" {
     name    = "${local.name}-mylb-http-proxy"
     url_map = google_compute_region_url_map.http.self_link
   }
-    ```
+  ```
 
 11. Initialise Terraform and apply the configuration 
   ```sh
