@@ -81,6 +81,7 @@ OPTIONAL: Use can also deploy the certificate using Terraform. Create tls.tf wit
   ```
 7. Create HTTPS Proxy in load-balander.tf
   ```sh
+    # HTTPS Target Proxy
    resource "google_compute_target_https_proxy" "mylb" {
     name   = "${local.name}-mylb-https-proxy"
     url_map = google_compute_url_map.mylb.self_link
@@ -95,17 +96,17 @@ OPTIONAL: Use can also deploy the certificate using Terraform. Create tls.tf wit
       target      = google_compute_target_https_proxy.mylb.self_link
       port_range  = "443"
       ip_protocol = "TCP"
-      ip_address = google_compute_address.mylb.address
+      ip_address  = google_compute_global_address.mylb.address
       load_balancing_scheme = "EXTERNAL_MANAGED" 
       network = google_compute_network.myvpc.id
       
       depends_on = [ google_compute_subnetwork.regional_proxy_subnet ]
     }
   ```  
-9. Setup http-to-https redirection. Add RL Map for HTTP to HTTPS redirection in load-balancer.tf
+9. Setup http-to-https redirection. Add URL Map for HTTP to HTTPS redirection in load-balancer.tf
   ```sh
-    # Regional URL Map for HTTP to HTTPS redirection
-  resource "google_compute_region_url_map" "http" {
+    # URL Map for HTTP to HTTPS redirection
+  resource "google_compute_url_map" "http" {
     name = "${local.name}-blog-http-to-https-url-map"
     default_url_redirect {
       redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
@@ -117,7 +118,7 @@ OPTIONAL: Use can also deploy the certificate using Terraform. Create tls.tf wit
 10. Modify the HTTP Proxy to use the new URL Map for HTTP to HTTPS redirection. It should looks like this
   ```sh
     # HTTP Proxy
-  resource "google_compute_region_target_http_proxy" "mylb" {
+  resource "google_compute_target_http_proxy" "mylb" {
     name    = "${local.name}-mylb-http-proxy"
     url_map = google_compute_region_url_map.http.self_link
   }
