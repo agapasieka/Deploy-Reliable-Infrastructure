@@ -3,17 +3,14 @@ resource "google_project_service" "cert_manager_api" {
   disable_on_destroy  = false 
 }
 
-# Certificate manager 
-resource "google_certificate_manager_certificate" "blog_ssl" {
-  location    = var.region
-  name        = "${local.name}-ssl-certificate"
-  description = "${local.name} Certificate Manager SSL Certificate"
-  scope       = "DEFAULT"
-  self_managed {
-    pem_certificate = file("${path.module}/self-signed-ssl/blog.crt")
-    pem_private_key = file("${path.module}/self-signed-ssl/blog.key")
-  }
-  labels = {
-    env = local.environment
+# SSL Certificate
+resource "google_compute_ssl_certificate" "blog_ssl" {
+  name_prefix = "blog-ssl-"
+  description = "SSL Certificate for blog"
+  private_key = file("self-signed-ssl/blog.key")
+  certificate = file("self-signed-ssl/blog.crt")
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
