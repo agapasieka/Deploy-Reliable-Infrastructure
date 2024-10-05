@@ -1,7 +1,6 @@
 # Reserve Static IP Address
 resource "google_compute_global_address" "mylb" {
   name   = "${local.name}-mylb-static-ip"
-  region = var.region
 }
 
 # Health Check
