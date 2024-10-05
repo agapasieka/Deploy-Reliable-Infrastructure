@@ -18,7 +18,7 @@ We will start with generating certificate
   ```sh
   openssl genrsa -out blog.key 2048
   ``` 
-4. Create certificate signing request:
+4. Create certificate signing request
   ```sh
   openssl req -new -key blog.key -out blog.csr -subj "/CN=blog.example.com"
   ``` 
@@ -27,7 +27,7 @@ We will start with generating certificate
   openssl x509 -req -days 7300 -in blog.csr -signkey blog.key -out blog.crt
   cd ..
   ``` 
-6. Create Certificate in Certiciate Manager
+6. Create Certificate in Certificate Manager
   ```sh
   resource "google_certificate_manager_certificate" "blog_ssl" {
   location    = var.region
