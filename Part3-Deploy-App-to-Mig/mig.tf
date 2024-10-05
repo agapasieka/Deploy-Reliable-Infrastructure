@@ -49,7 +49,7 @@ resource "google_compute_autoscaler" "blog_autoscaler" {
   zone   = var.zones[0]
   target = google_compute_instance_group_manager.blog_mig.id
   autoscaling_policy {
-    max_replicas    = 6
+    max_replicas    = 5
     min_replicas    = 2
     cooldown_period = 60
     cpu_utilization {
