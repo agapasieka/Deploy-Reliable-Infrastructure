@@ -44,7 +44,7 @@ resource "google_compute_health_check" "blog_hc" {
 }
 
 # MIG Autoscaling
-resource "google_compute_region_autoscaler" "blog_autoscaler" {
+resource "google_compute_autoscaler" "blog_autoscaler" {
   name   = "${local.name}-blog-autoscaler"
   target = google_compute_instance_group_manager.blog_mig.id
   autoscaling_policy {
