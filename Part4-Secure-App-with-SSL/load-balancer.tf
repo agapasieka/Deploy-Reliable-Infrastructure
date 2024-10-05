@@ -1,6 +1,6 @@
 # Reserve Static IP Address
 resource "google_compute_global_address" "mylb" {
-  name   = "${local.name}-mylb-static-ip"
+  name = "${local.name}-mylb-static-ip"
 }
 
 # Health Check
@@ -36,15 +36,30 @@ resource "google_compute_url_map" "mylb" {
   default_service = google_compute_backend_service.mylb.self_link
 }
 
+# URL Map for HTTP to HTTPS redirection
+resource "google_compute_url_map" "http" {
+  name = "${local.name}-blog-http-to-https-url-map"
+  default_url_redirect {
+    redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
+    strip_query            = false
+    https_redirect         = true
+  }
+}
 
 # HTTP Proxy
 resource "google_compute_target_http_proxy" "mylb" {
   name    = "${local.name}-mylb-http-proxy"
-  url_map = google_compute_url_map.mylb.self_link
+  url_map = google_compute_url_map.http.self_link ## Modify in Step2/Task4
 }
 
+# HTTPS Target Proxy
+resource "google_compute_target_https_proxy" "mylb" {
+  name             = "${local.name}-mylb-https-proxy"
+  url_map          = google_compute_url_map.mylb.self_link
+  ssl_certificates = [google_compute_ssl_certificate.blog_ssl.id]
+}
 
-# Forwarding Rule
+# HTTP Forwarding Rule
 resource "google_compute_global_forwarding_rule" "mylb" {
   name                  = "${local.name}-mylb-forwarding-rule"
   target                = google_compute_target_http_proxy.mylb.self_link
@@ -52,6 +67,19 @@ resource "google_compute_global_forwarding_rule" "mylb" {
   ip_protocol           = "TCP"
   ip_address            = google_compute_global_address.mylb.address
   load_balancing_scheme = "EXTERNAL_MANAGED"
+
+  depends_on = [google_compute_subnetwork.regional_proxy_subnet]
+}
+
+# HTTPS Forwarding Rule
+resource "google_compute_forwarding_rule" "mylb_https" {
+  name                  = "${local.name}-mylb-https-forwarding-rule"
+  target                = google_compute_target_https_proxy.mylb.self_link
+  port_range            = "443"
+  ip_protocol           = "TCP"
+  ip_address            = google_compute_global_address.mylb.address
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+  network               = google_compute_network.myvpc.id
 
   depends_on = [google_compute_subnetwork.regional_proxy_subnet]
 }
