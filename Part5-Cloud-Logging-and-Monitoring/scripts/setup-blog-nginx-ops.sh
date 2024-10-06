@@ -72,7 +72,8 @@ server {
        deny all;
    }
    location / {
-       root /dev/null;
+       root /usr/share/nginx/html;
+       index blog.html;
    }
 }
 EOF
