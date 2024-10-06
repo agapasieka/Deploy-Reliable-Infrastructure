@@ -56,6 +56,10 @@ EOF
 # Enable the blog configuration
 sudo ln -sf /etc/nginx/sites-available/blog /etc/nginx/sites-enabled/blog
 
+# Test and restart Nginx
+echo "Testing Nginx configuration..."
+sudo nginx -t && sudo systemctl restart nginx || sudo service nginx restart
+
 # Create status.conf in Nginx
 sudo tee /etc/nginx/conf.d/status.conf > /dev/null << EOF
 server {
@@ -73,10 +77,9 @@ server {
 }
 EOF
 
+# Nginx reload
+sudo service nginx reload
 
-# Test and restart Nginx
-echo "Testing Nginx configuration..."
-sudo nginx -t && sudo systemctl restart nginx || sudo service nginx restart
 
 echo "Blog setup complete! Access it at http://<your_server_ip>"
 
