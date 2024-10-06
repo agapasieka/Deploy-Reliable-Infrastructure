@@ -78,7 +78,7 @@ server {
 EOF
 
 # Nginx reload
-sudo service nginx reload
+sudo systemctl reload nginx || sudo service nginx reload
 
 
 echo "Blog setup complete! Access it at http://<your_server_ip>"
