@@ -18,7 +18,7 @@ We will start with generating certificate
   ```sh
   openssl genrsa -out blog.key 2048
   ``` 
-4. Create certificate signing request
+4. Create certificate signing request:
   ```sh
   openssl req -new -key blog.key -out blog.csr -subj "/CN=blog.example.com"
   ``` 
@@ -27,18 +27,21 @@ We will start with generating certificate
   openssl x509 -req -days 7300 -in blog.csr -signkey blog.key -out blog.crt
   cd ..
   ``` 
-6. Create Certificate in Certificate Manager
+6. Create Certificate in Certiciate Manager
   ```sh
-  resource "google_compute_ssl_certificate" "blog_ssl" {
-    name_prefix = "blog-ssl-"
-    description = "SSL Certificate for blog"
-    private_key = file("self-signed-ssl/blog.key")
-    certificate = file("self-signed-ssl/blog.crt")
-  
-    lifecycle {
-      create_before_destroy = true
-    }
+  resource "google_certificate_manager_certificate" "blog_ssl" {
+  location    = var.region
+  name        = "${local.name}-ssl-certificate"
+  description = "${local.name} Certificate Manager SSL Certificate"
+  scope       = "DEFAULT"
+  self_managed {
+    pem_certificate = file("${path.module}/self-signed-ssl/blog.crt")
+    pem_private_key = file("${path.module}/self-signed-ssl/blog.key")
   }
+  labels = {
+    env = local.environment
+  }
+}
   ```
 OPTIONAL: Use can also deploy the certificate using Terraform. Create tls.tf with the folowing example config
   ```sh
@@ -81,32 +84,31 @@ OPTIONAL: Use can also deploy the certificate using Terraform. Create tls.tf wit
   ```
 7. Create HTTPS Proxy in load-balander.tf
   ```sh
-    # HTTPS Target Proxy
-   resource "google_compute_target_https_proxy" "mylb" {
+  resource "google_compute_region_target_https_proxy" "mylb" {
     name   = "${local.name}-mylb-https-proxy"
-    url_map = google_compute_url_map.mylb.self_link
-    ssl_certificates = [google_compute_ssl_certificate.blog_ssl.id]
+    url_map = google_compute_region_url_map.mylb.self_link
+    certificate_manager_certificates = [ google_certificate_manager_certificate.blog_ssl.id ]
   }
   ```
-8. Create Forwarding rule for HTTPS
+8. Create Regional Forwarding rule for HTTPS
   ```sh
-    # HTTPS Forwarding Rule
+    # Regional HTTPS Forwarding Rule
   resource "google_compute_forwarding_rule" "mylb_https" {
       name        = "${local.name}-mylb-https-forwarding-rule"
-      target      = google_compute_target_https_proxy.mylb.self_link
+      target      = google_compute_region_target_https_proxy.mylb.self_link
       port_range  = "443"
       ip_protocol = "TCP"
-      ip_address  = google_compute_global_address.mylb.address
+      ip_address = google_compute_address.mylb.address
       load_balancing_scheme = "EXTERNAL_MANAGED" 
       network = google_compute_network.myvpc.id
       
       depends_on = [ google_compute_subnetwork.regional_proxy_subnet ]
     }
   ```  
-9. Setup http-to-https redirection. Add URL Map for HTTP to HTTPS redirection in load-balancer.tf
+9. Setup http-to-https redirection. Add RL Map for HTTP to HTTPS redirection in load-balancer.tf
   ```sh
-    # URL Map for HTTP to HTTPS redirection
-  resource "google_compute_url_map" "http" {
+    # Regional URL Map for HTTP to HTTPS redirection
+  resource "google_compute_region_url_map" "http" {
     name = "${local.name}-blog-http-to-https-url-map"
     default_url_redirect {
       redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
@@ -115,14 +117,14 @@ OPTIONAL: Use can also deploy the certificate using Terraform. Create tls.tf wit
     }
   }
   ```
-10. Modify the HTTP Proxy to use the new URL Map for HTTP to HTTPS redirection. It should looks like this
+10. Modify the Regional HTTP Proxy to use the new URL Map for HTTP to HTTPS redirection. It should looks like this
   ```sh
-    # HTTP Proxy
-  resource "google_compute_target_http_proxy" "mylb" {
+    # Regional HTTP Proxy
+  resource "google_compute_region_target_http_proxy" "mylb" {
     name    = "${local.name}-mylb-http-proxy"
     url_map = google_compute_region_url_map.http.self_link
   }
-  ```
+    ```
 
 11. Initialise Terraform and apply the configuration 
   ```sh
