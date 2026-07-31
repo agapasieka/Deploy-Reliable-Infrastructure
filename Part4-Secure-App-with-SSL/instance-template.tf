@@ -28,10 +28,10 @@ resource "google_compute_region_instance_template" "blog" {
     on_host_maintenance = "MIGRATE"
   }
 
-   disk {
-    source_image      = data.google_compute_image.my_image.self_link
-    boot              = true
-    auto_delete = true
+  disk {
+    source_image = data.google_compute_image.my_image.self_link
+    boot         = true
+    auto_delete  = true
   }
 
   network_interface {
